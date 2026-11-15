@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Your coursework becomes your game — an AI learning arcade that grows with each week's classes, mistakes, and progress.">
+  <title>Study Arcade — English V1</title>
+  <style>
+    :root {
+      --ink:#172033; --muted:#68738a; --paper:#fffdf8; --cream:#f5f0e7;
+      --lime:#d9ff68; --purple:#7a5cff; --purple-dark:#5a3ce7; --orange:#ff8a45;
+      --cyan:#6ee7e7; --pink:#ff8cb5; --line:#dcd7cf; --shadow:0 12px 30px rgba(37,30,70,.1);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;color:var(--ink);background:var(--cream);font-family:Inter,ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",sans-serif}
+    button,input,textarea,select{font:inherit}button{cursor:pointer}
+    .shell{min-height:100vh;display:grid;grid-template-columns:230px 1fr}
+    aside{background:#191d2c;color:#fff;padding:26px 20px;display:flex;flex-direction:column;gap:30px;position:sticky;top:0;height:100vh}
+    .logo{font-size:21px;font-weight:900;letter-spacing:-.7px}.logo i{color:var(--lime);font-style:normal}.logo small{display:block;font-size:10px;letter-spacing:1.8px;color:#9ea7bd;margin-top:7px}
+    nav{display:grid;gap:8px}.nav-item{border:0;background:transparent;color:#aeb6ca;text-align:left;padding:11px 12px;border-radius:11px;font-weight:700}.nav-item.active,.nav-item:hover{background:#2b3044;color:#fff}.nav-item span{display:inline-grid;place-items:center;width:26px}
+    .streak{margin-top:auto;padding:16px;background:#252a3d;border:1px solid #373d54;border-radius:15px}.streak b{font-size:22px;color:var(--lime)}
+    main{padding:28px 36px 60px;min-width:0}.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:28px}.greeting h1{font-size:27px;margin:0;letter-spacing:-.8px}.greeting p{color:var(--muted);margin:6px 0 0;font-size:14px}.score{display:flex;gap:9px}.chip{background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:9px 13px;font-size:13px;font-weight:800}.chip strong{color:var(--purple)}
+    .hero{display:grid;grid-template-columns:1.25fr .75fr;gap:20px;padding:29px;background:var(--paper);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;position:relative}.hero:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-90px;top:-90px;background:var(--lime);opacity:.35}.hero-copy{position:relative;z-index:1}.kicker{font-size:11px;font-weight:900;letter-spacing:1.7px;text-transform:uppercase;color:var(--purple)}.hero h2{font-size:38px;line-height:1.04;letter-spacing:-1.8px;margin:9px 0 12px;max-width:660px}.hero p{color:var(--muted);line-height:1.6;max-width:640px;margin:0}.week-ring{align-self:center;justify-self:center;width:160px;height:160px;border-radius:50%;display:grid;place-items:center;text-align:center;background:#191d2c;color:white;box-shadow:inset 0 0 0 10px var(--lime);position:relative;z-index:1}.week-ring b{font-size:36px;display:block}.week-ring small{color:#bdc4d6;font-weight:700}
+    .section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:29px 0 13px}.section-head h2{font-size:21px;margin:0}.section-head p{font-size:13px;color:var(--muted);margin:4px 0 0}
+    .workspace{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{background:var(--paper);border:1px solid var(--line);border-radius:19px;padding:21px;box-shadow:0 8px 22px rgba(37,30,70,.05)}.card h3{font-size:17px;margin:0 0 5px}.helper{font-size:13px;color:var(--muted);line-height:1.5;margin:0 0 15px}
+    .dropzone{border:1.5px dashed #b8b0cb;border-radius:15px;background:#faf8f3;padding:22px;text-align:center;transition:.2s}.dropzone.drag{border-color:var(--purple);background:#f2efff}.dropzone input{display:none}.drop-icon{font-size:28px}.dropzone b{display:block;margin:6px}.dropzone span{font-size:12px;color:var(--muted)}.outline-btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 13px;font-weight:800;color:var(--ink)}
+    .file-list{display:grid;gap:7px;margin-top:12px}.file{display:flex;justify-content:space-between;gap:10px;align-items:center;background:#f3f0ea;border-radius:9px;padding:9px 11px;font-size:12px}.file b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.file button{border:0;background:none;color:var(--muted)}
+    label.field{display:block;font-size:12px;font-weight:800;margin:12px 0 5px}textarea,select{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px;background:#fff;color:var(--ink)}textarea{resize:vertical;min-height:100px;line-height:1.45}.wrong-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.wrong-grid textarea{min-height:78px}
+    .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0}.step{padding:10px 8px;border-radius:10px;background:#ece8e1;color:#8a8e98;font-size:11px;font-weight:850;text-align:center}.step.on{background:#e9e4ff;color:var(--purple)}.step.done{background:#dff6d2;color:#397029}.step em{font-style:normal;display:block;font-size:15px;margin-bottom:3px}
+    .primary{border:0;border-radius:11px;background:var(--purple);color:#fff;padding:12px 16px;font-weight:850;box-shadow:0 6px 0 var(--purple-dark)}.primary:hover{transform:translateY(1px);box-shadow:0 5px 0 var(--purple-dark)}.primary:disabled{opacity:.48;cursor:not-allowed;transform:none}.wide{width:100%}
+    .insights{grid-column:1/-1;display:none}.insights.show{display:block}.analysis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.insight{border:1px solid var(--line);border-radius:14px;padding:15px;background:#fff}.insight .pill{display:inline-block;padding:4px 7px;border-radius:7px;font-size:10px;font-weight:900;margin-bottom:9px}.concept{background:#e4f8f8;color:#227373}.gap{background:#ffe5ec;color:#a33b61}.action{background:#e9e4ff;color:#6247d4}.insight b{display:block;font-size:14px;margin-bottom:6px}.insight p{font-size:12px;color:var(--muted);line-height:1.45;margin:0}
+    .generated{display:none;grid-column:1/-1}.generated.show{display:block}.game-card{background:#191d2c;color:white;border-radius:20px;padding:21px;display:grid;grid-template-columns:1fr auto;gap:18px;position:relative;overflow:hidden}.game-card:after{content:"03";position:absolute;right:20px;bottom:-28px;font-size:120px;font-weight:950;color:#ffffff0b}.game-card h3{font-size:24px;margin:6px 0}.game-card p{color:#bdc4d6;font-size:13px;line-height:1.5}.game-tags{display:flex;gap:7px;flex-wrap:wrap}.game-tags span{font-size:11px;padding:6px 8px;border:1px solid #464d66;border-radius:8px}.badge{align-self:start;background:var(--lime);color:#222a16;border-radius:12px;padding:11px 13px;text-align:center;font-weight:900}.badge small{display:block;font-size:9px;letter-spacing:1px}.card-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}
+    .battle{display:none;grid-column:1/-1;background:#111522;color:#fff;border-color:#2f354a}.battle.show{display:block}.battle-top{display:flex;justify-content:space-between;align-items:center;gap:15px}.battle h3{font-size:21px;margin:4px 0}.battle small{color:#aeb6ca}.hpbar{height:8px;background:#30364b;border-radius:10px;overflow:hidden;margin:13px 0 18px}.hpbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--pink),var(--orange));transition:.35s}.question{font-size:18px;font-weight:750;line-height:1.45;margin:15px 0}.options{display:grid;grid-template-columns:1fr 1fr;gap:9px}.option{border:1px solid #3b4258;background:#242a3e;color:#fff;border-radius:11px;padding:12px;text-align:left}.option:hover{border-color:var(--lime)}.option.correct{background:#244d3e;border-color:#64e2ae}.option.wrong{background:#542e3f;border-color:#ff789a}.feedback{min-height:22px;margin-top:12px;color:#cdd3e4;font-size:13px}.next{display:none;margin-top:12px}
+    .toast{position:fixed;right:22px;bottom:22px;background:#191d2c;color:#fff;border-radius:12px;padding:12px 16px;box-shadow:var(--shadow);font-size:13px;transform:translateY(120px);transition:.25s;z-index:10}.toast.show{transform:translateY(0)}
+    @media(max-width:900px){.shell{grid-template-columns:76px 1fr}aside{padding:23px 12px}.logo{font-size:0}.logo i{font-size:25px}.logo small,.nav-item:not(.active){font-size:0}.nav-item{padding:11px;text-align:center}.nav-item span{font-size:17px}.streak{padding:10px;text-align:center}.streak small{display:none}.hero{grid-template-columns:1fr}.week-ring{display:none}.workspace{grid-template-columns:1fr}.analysis-grid{grid-template-columns:1fr}}
+    @media(max-width:620px){.shell{display:block}aside{height:auto;position:static;flex-direction:row;align-items:center;padding:13px 16px}.logo i{font-size:22px}nav{display:flex;overflow:auto;margin-left:auto}.nav-item{display:none}.nav-item.active{display:block}.streak{margin:0}.streak b{font-size:16px}main{padding:20px 14px 45px}.topbar{align-items:flex-start}.score{display:none}.hero{padding:22px}.hero h2{font-size:31px}.wrong-grid,.options{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.game-card{grid-template-columns:1fr}.badge{justify-self:start}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="logo"><i>✦</i> STUDY ARCADE<small>PERSONAL LEARNING LAB</small></div>
+      <nav aria-label="Primary navigation">
+        <button class="nav-item active"><span>⌂</span> This week</button>
+        <button class="nav-item"><span>♜</span> Battle arena</button>
+        <button class="nav-item"><span>↻</span> Review vault</button>
+        <button class="nav-item"><span>◎</span> Progress</button>
+      </nav>
+      <div class="streak"><small>LEARNING STREAK</small><br><b>🔥 7 days</b></div>
+    </aside>
+    <main>
+      <header class="topbar">
+        <div class="greeting"><h1>Good afternoon, Alex.</h1><p>Your game has learned from this week's work.</p></div>
+        <div class="score"><div class="chip">⚡ <strong id="xp">860</strong> XP</div><div class="chip">🏅 Level 8</div></div>
+      </header>
+
+      <section class="hero">
+        <div class="hero-copy"><div class="kicker">Weekly learning loop · Version 1</div><h2>Your coursework becomes your game.</h2><p>Not a fixed question bank. Study Arcade grows every week with your real class content, mistakes, and progress—turning them into personalized practice, weekly challenges, and smarter reviews.</p></div>
+        <div class="week-ring"><div><small>WEEKLY GOAL</small><b>72%</b><small>4 of 6 quests</small></div></div>
+      </section>
+
+      <div class="section-head"><div><h2>Teach your game what happened this week</h2><p>About 2 minutes. Your files stay in this browser prototype.</p></div><span class="chip">Week 3</span></div>
+      <div class="workspace">
+        <section class="card">
+          <h3>1. Add this week's coursework</h3><p class="helper">Class notes, finished practice, homework, or a teacher review sheet—the real material your game will grow from.</p>
+          <div class="dropzone" id="dropzone">
+            <div class="drop-icon">⇧</div><b>Drop files here</b><span>PDF, image, DOCX, or TXT · up to 10 MB each</span><br><br>
+            <label class="outline-btn" for="files">Choose files</label><input id="files" type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.docx,.txt">
+          </div>
+          <div class="file-list" id="fileList"></div>
+          <label class="field" for="notes">Or paste notes</label><textarea id="notes" placeholder="Example: Newton's laws, free-body diagrams, friction on an incline..."></textarea>
+        </section>
+
+        <section class="card">
+          <h3>2. Annotate the hard parts</h3><p class="helper">Tell the coach where your thinking broke down. This makes the generated practice more precise.</p>
+          <label class="field" for="subject">Subject</label><select id="subject"><option>AP Physics C: Mechanics</option><option>SAT Math</option><option>SAT Reading & Writing</option><option>Other</option></select>
+          <div class="wrong-grid">
+            <div><label class="field" for="wrongQuestion">Question or topic</label><textarea id="wrongQuestion" placeholder="A 5 kg block rests on a 30° incline..."></textarea></div>
+            <div><label class="field" for="wrongAnswer">My answer + why</label><textarea id="wrongAnswer" placeholder="I used mg instead of the parallel component..."></textarea></div>
+          </div>
+          <div class="steps" aria-label="AI generation progress"><div class="step on" id="step1"><em>①</em>Collect</div><div class="step" id="step2"><em>②</em>Extract</div><div class="step" id="step3"><em>③</em>Diagnose</div><div class="step" id="step4"><em>④</em>Generate</div></div>
+          <button class="primary wide" id="analyzeBtn">✦ Analyze & build my weekly card</button>
+        </section>
+
+        <section class="card insights" id="insights">
+          <h3>AI learning map</h3><p class="helper">A reviewable draft of what the coach found before it creates new practice.</p>
+          <div class="analysis-grid">
+            <article class="insight"><span class="pill concept">KNOWLEDGE POINT</span><b id="conceptTitle">Force components on an incline</b><p>Resolve weight into axes parallel and perpendicular to the surface before applying Newton's second law.</p></article>
+            <article class="insight"><span class="pill gap">IMPROVEMENT AREA</span><b>Diagram → equation transfer</b><p>Your setup uses the full weight where only the parallel component belongs. Practice labeling axes before calculating.</p></article>
+            <article class="insight"><span class="pill action">NEXT MOVE</span><b>Interleave + revisit</b><p>Start with one worked example, then mix three variants. Revisit after 1, 3, and 7 days.</p></article>
+          </div>
+        </section>
+
+        <section class="card generated" id="generated">
+          <div class="game-card">
+            <div><div class="kicker" style="color:var(--lime)">YOUR NEW WEEKLY CHALLENGE</div><h3>Magic Battle 03: The Tilted Tower</h3><p>Defeat the Gravity Warden by mastering force components, friction, and free-body diagrams. Your missed concepts return through spaced repetition.</p><div class="game-tags"><span>6 adaptive questions</span><span>3 difficulty levels</span><span>1 · 3 · 7 day reviews</span><span>+180 XP</span></div></div>
+            <div class="badge"><small>FOCUS SCORE</small>82%</div>
+          </div>
+          <div class="card-actions"><button class="primary" id="playBtn">⚔ Start Magic Battle</button><button class="outline-btn" id="saveBtn">Save for this week</button></div>
+        </section>
+
+        <section class="card battle" id="battle">
+          <div class="battle-top"><div><small>MAGIC BATTLE 03 · SPACED REPETITION</small><h3>The Gravity Warden</h3></div><div><span id="hearts">♥ ♥ ♥</span> · <b id="battleXp">0 XP</b></div></div>
+          <div class="hpbar"><i id="hp"></i></div><small id="schedule">Round 1 · New practice</small>
+          <div class="question" id="question"></div><div class="options" id="options"></div><div class="feedback" id="feedback"></div><button class="primary next" id="nextBtn">Next spell →</button>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    const $=id=>document.getElementById(id);
+    const files=[];
+    const questions=[
+      {q:"A block rests on a frictionless incline at angle θ. Which expression gives the component of gravity parallel to the incline?",o:["mg cos θ","mg sin θ","mg tan θ","mg"],a:1,e:"Choose axes along the incline. The parallel component is mg sin θ; the normal component is mg cos θ."},
+      {q:"A block slides down a rough incline at constant speed. What must be true?",o:["There is no friction","Net force along the incline is zero","The normal force is zero","Gravity is smaller than friction"],a:1,e:"Constant speed means zero acceleration, so friction balances the downhill component of gravity."},
+      {q:"Why should you draw the axes before writing Newton's second-law equations?",o:["To change the object's mass","To remove gravity","To match force components to the motion","To make friction larger"],a:2,e:"Axes aligned with the surface make it clear which force components affect motion along and perpendicular to the incline."}
+    ];
+    let qi=0,enemy=100,hearts=3,battleXp=0,locked=false;
+    function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2200)}
+    function addFiles(list){[...list].forEach(f=>{if(f.size<=10*1024*1024&&!files.some(x=>x.name===f.name))files.push(f)});renderFiles()}
+    function renderFiles(){$('fileList').innerHTML=files.map((f,i)=>`<div class="file"><b>📄 ${f.name}</b><span>${Math.max(1,Math.round(f.size/1024))} KB <button aria-label="Remove ${f.name}" onclick="removeFile(${i})">×</button></span></div>`).join('')}
+    window.removeFile=i=>{files.splice(i,1);renderFiles()};
+    $('files').addEventListener('change',e=>addFiles(e.target.files));
+    ['dragenter','dragover'].forEach(x=>$('dropzone').addEventListener(x,e=>{e.preventDefault();$('dropzone').classList.add('drag')}));
+    ['dragleave','drop'].forEach(x=>$('dropzone').addEventListener(x,e=>{e.preventDefault();$('dropzone').classList.remove('drag')}));
+    $('dropzone').addEventListener('drop',e=>addFiles(e.dataTransfer.files));
+    $('analyzeBtn').addEventListener('click',()=>{
+      const btn=$('analyzeBtn');btn.disabled=true;btn.textContent='Reading your learning evidence…';
+      const steps=[$('step1'),$('step2'),$('step3'),$('step4')];let n=0;
+      const timer=setInterval(()=>{steps[n].classList.remove('on');steps[n].classList.add('done');n++;if(n<4){steps[n].classList.add('on');btn.textContent=['Reading your learning evidence…','Extracting knowledge points…','Locating improvement areas…','Generating adaptive practice…'][n]}else{clearInterval(timer);$('insights').classList.add('show');$('generated').classList.add('show');btn.textContent='✓ Weekly card ready';const value=$('subject').value;$('conceptTitle').textContent=value.includes('Physics')?'Force components on an incline':value.includes('Math')?'Linear equations and error patterns':'Evidence, transitions, and precision';$('insights').scrollIntoView({behavior:'smooth',block:'center'});toast('Weekly game card generated')}} ,520);
+    });
+    $('saveBtn').addEventListener('click',()=>{localStorage.setItem('studyArcadeWeeklyCard','Magic Battle 03');toast('Saved to this week')});
+    $('playBtn').addEventListener('click',()=>{$('battle').classList.add('show');qi=0;enemy=100;hearts=3;battleXp=0;draw();$('battle').scrollIntoView({behavior:'smooth',block:'center'})});
+    function draw(){locked=false;const q=questions[qi%questions.length];$('question').textContent=q.q;$('options').innerHTML=q.o.map((x,i)=>`<button class="option" onclick="answer(${i})"><b>${'ABCD'[i]}.</b> ${x}</button>`).join('');$('feedback').textContent='';$('nextBtn').style.display='none';$('schedule').textContent=['Round 1 · New practice','Round 2 · Mixed retrieval','Round 3 · 1-day review'][qi]||'Review complete';}
+    window.answer=i=>{if(locked)return;locked=true;const q=questions[qi%questions.length],ok=i===q.a;document.querySelectorAll('.option').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('correct');else if(j===i)b.classList.add('wrong')});if(ok){enemy=Math.max(0,enemy-34);battleXp+=30;$('feedback').textContent='✦ Direct hit! '+q.e}else{hearts--;$('feedback').textContent='Added to your 1-day review. '+q.e}$('hp').style.width=enemy+'%';$('hearts').textContent='♥ '.repeat(hearts)+'♡ '.repeat(3-hearts);$('battleXp').textContent=battleXp+' XP';$('xp').textContent=860+battleXp;$('nextBtn').style.display='inline-block';$('nextBtn').textContent=(qi===questions.length-1||hearts===0)?'View battle result →':'Next spell →'};
+    $('nextBtn').addEventListener('click',()=>{if(qi===questions.length-1||hearts===0){$('question').textContent=hearts?'Victory! The Gravity Warden has been defeated.':'Quest paused. Your review schedule is ready.';$('options').innerHTML='';$('feedback').textContent=`You earned ${battleXp} XP. Missed concepts will return after 1 day, then 3 and 7 days after successful recall.`;$('nextBtn').style.display='none';$('schedule').textContent='Next review · Tomorrow'}else{qi++;draw()}});
+  </script>
+</body>
+</html>
